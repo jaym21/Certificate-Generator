@@ -2,14 +2,16 @@ import pandas as pd
 from pandas import ExcelWriter,ExcelFile
 from PIL import Image,ImageDraw,ImageFont
 import string
+from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart 
 from email.mime.text import MIMEText 
 from email.mime.base import MIMEBase 
 from email import encoders 
+import smtplib
 
 # the email address and password of sender
-fromEmail = "Sender's email id here"
-pwd = "Sender's email password here"
+fromEmail = "Sender's Email id here"
+pwd = "Sender's Email password here"
 
 
 # opening the data about students in dataframe using pandas
@@ -50,20 +52,25 @@ for i in df_students.index:
     # attaching the body with msg
     msg.attach(MIMEText(body, 'plain'))
 
-    # getting the certificate to be sent
+    # attaching the certificate to be sent
     attachmentName = name + ".pdf"
-    attachment = open(certificateName, encoding="utf8")
-    p = MIMEBase('application', 'octet-stream')
+    with open(certificateName, "rb") as f:
+            attach = MIMEApplication(f.read(),_subtype="pdf")
+    attach.add_header('Content-Disposition','attachment',filename=attachmentName)
+    msg.attach(attach)
 
-    # changing payload in encoded form  
-    p.set_payload((attachment).read())
-    # encoding into base64
-    encoders.encode_base64(p)
+    # attachment = open(certificateName, errors='ignore')
+    # p = MIMEBase('application', 'octet-stream')
 
-    p.add_header('Content-Disposition', "attachment; filename = %s" %attachmentName)
+    # # changing payload in encoded form  
+    # p.set_payload((attachment).read())
+    # # encoding into base64
+    # encoders.encode_base64(p)
 
-    # attaching payload with msg
-    msg.attach(p)
+    # p.add_header('Content-Disposition', "attachment; filename = %s" %attachmentName)
+
+    # # attaching payload with msg
+    # msg.attach(p)
 
     # creating SMTP session
     s = smtplib.SMTP('smtp.gmail.com', 587)
