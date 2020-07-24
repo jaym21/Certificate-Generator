@@ -1,5 +1,5 @@
 # Certificate-Generator
-- This program genrates e-Certificates and mails them to participants.
+- This program generates e-Certificates and mails them to participants.
 - It uses PIL ImageDraw to write the name of student on the certificate.
 - It uses MIME to edit the mailing details and add attachment(certificate) to the participants.
 - SMTP is used to mail.
